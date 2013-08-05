@@ -2,3 +2,4 @@
 chibios
 build
 *~
+.dep

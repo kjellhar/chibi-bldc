@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base.1503945658">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base.1503945658" moduleId="org.eclipse.cdt.core.settings" name="Default">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactName="chibi-bldc" buildProperties="" description="" id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base.1503945658" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base.1503945658.1416417405" name="/" resourcePath="">
+						<toolChain id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base.18457191" name="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.toolchain.base">
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.processor.34849303" name="Processor" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.processor"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.thumb.259119953" name="Thumb (-mthumb)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.thumb"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.thumbinterwork.833075764" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.thumbinterwork"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.endiannes.1652703215" name="Endiannes" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.endiannes"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.fpu.abi.530344925" name="Float ABI" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.fpu.abi"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.fpu.unit.1465541477" name="FPU Type" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.fpu.unit"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level.170851233" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.format.1892763480" name="Debug format" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.format"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.other.1932726357" name="Other debugging flags" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.other"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.prof.1286548097" name="Generate prof information (-p)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.prof"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.gprof.608497237" name="Generate gprof information (-pg)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.gprof"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.createflash.1474924849" name="Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.createflash"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.createlisting.696996435" name="Create Extended Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.createlisting"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.printsize.510677398" name="Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.addtools.printsize"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.GNU_ELF" id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.platform.base.1725126840" isAbstract="false" name="Mac OS X Platform" osList="macosx" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.platform.base"/>
+							<builder id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.builder.base.319049433" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="ARM Yagarto Mac OS X GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.builder.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.1233789055" name="ARM Yagarto Mac OS X GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input.401458652" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.1257584101" name="ARM Yagarto Mac OS X GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.1615787005" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.compiler.base.523770710" name="ARM Yagarto Mac OS X GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.compiler.base">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.compiler.base.input.595341056" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.compiler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.linker.base.1632672976" name="ARM Yagarto Mac OS X GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.linker.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.linker.base.206262859" name="ARM Yagarto Mac OS X GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.cpp.linker.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.archiver.base.1242592335" name="ARM Yagarto Mac OS X GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.archiver.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.createflash.base.661622166" name="ARM Yagarto Mac OS X GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.createflash.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.createlisting.base.79328790" name="ARM Yagarto Mac OS X GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.createlisting.base"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.printsize.base.656332687" name="ARM Yagarto Mac OS X GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.printsize.base"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="chibi-bldc.null.1111647156" name="chibi-bldc"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope"/>
+</cproject>
