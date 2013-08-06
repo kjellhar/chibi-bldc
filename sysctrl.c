@@ -13,7 +13,7 @@
 
 #include "usbcfg.h"
 
-#include "pwm_gen.h"
+#include "bldc.h"
 
 
 cmdPkg cmdMemPoolBuffer[CMD_MEM_POOL_SIZE];
