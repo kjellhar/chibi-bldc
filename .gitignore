@@ -3,3 +3,4 @@ chibios
 build
 *~
 .dep
+.settings
