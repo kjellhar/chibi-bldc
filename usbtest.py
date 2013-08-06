@@ -61,7 +61,8 @@ else:
 	inp = 0
 
 
-ep_out.write([chr(42), chr(inp), chr(0), chr(4)])
+#ep_out.write([chr(42), chr(inp), chr(0), chr(4)])
+ep_out.write([chr(64), chr(32), chr(0), chr(4)])
 
 try:
 	ret = ep_in.read(64)

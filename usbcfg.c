@@ -33,7 +33,9 @@ void dataTransmitted(USBDriver *usbp, usbep_t ep){
   (void) ep;
 
   //Signals that the current TX is finished
+  chSysLockFromIsr();
   chEvtBroadcastFlagsI(&esUsbTxComplete, (flagsmask_t)0);
+  chSysUnlockFromIsr();
 }
 
 /**
@@ -68,7 +70,9 @@ void dataReceived(USBDriver *usbp, usbep_t ep){
   (void) ep;
 
   //Signals that the current RX is finished
+  chSysLockFromIsr();
   chEvtBroadcastFlagsI(&esUsbRxComplete, (flagsmask_t)0);
+  chSysUnlockFromIsr();
 }
 
 
@@ -108,7 +112,9 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
      * After a reset, the usb system will not be operational
      * until it is configured.
      */
+    chSysLockFromIsr();
     chEvtBroadcastFlagsI(&esUsbReset, (flagsmask_t)0);
+    chSysUnlockFromIsr();
     return;
   case USB_EVENT_ADDRESS:
     return;
@@ -121,12 +127,12 @@ static void usb_event(USBDriver *usbp, usbevent_t event) {
     chSysLockFromIsr();
     usbInitEndpointI(usbp, 1, &ep1config);
     usbInitEndpointI(usbp, 2, &ep2config);
-    chSysUnlockFromIsr();
 
     /* Signals that the configuration is complete, and the USB system
      * is ready to be used.
      */
     chEvtBroadcastFlagsI(&esUsbConfigured, (flagsmask_t)0);
+    chSysUnlockFromIsr();
 
     return;
   case USB_EVENT_SUSPEND:
@@ -302,7 +308,7 @@ static msg_t tUsbRx(void *arg) {
     }
     else {
       // Post pagckage to sysctrl if receive was successful
-      chMBPostI (&cmdInMailbox, (msg_t)cmdBufp);
+      chMBPost (&cmdInMailbox, (msg_t)cmdBufp, TIME_INFINITE);
     }
   }
 

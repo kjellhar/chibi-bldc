@@ -28,19 +28,22 @@
 
 
 #define PWM_OUT_PORT_MASK   0x3F
-#define PWM_OUT_PORT        GPIOF
+#define PWM_OUT_PORT        GPIOE
+#define PWM_OUT_OFFSET      8
 
 
-#define PWM_PULSE1_CH       0
-#define PWM_ZSENSE_CH       4
+#define PWM_PULSE0_CH       0
 
 #define TIME1_LIMIT         100
 
 
 extern Semaphore semPwmCounterReset;
-extern Semaphore semPwmZeroSense;
+extern Semaphore semPwmCh0Compare;
 
 
-extern void startPwmGen(uint32_t freq, uint32_t per);
+extern void startPwmGen(void);
+extern void bldcStateFwd(void);
+extern void bldcStateRev(void);
+extern void bldcSetDutyCycle(uint32_t dutyCycle);
 
 #endif /* BLDC_H_ */

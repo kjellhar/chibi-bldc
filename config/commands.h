@@ -18,10 +18,12 @@
 #define     C2_SYS_LED4_ON          0xF6
 #define     C2_SYS_LED4_OFF         0xF7
 
-#define     C1_PWM          0x40
-#define     C2_PWM_START    0x01
-#define     C2_PWM_SET_F    0x10
-#define     C2_PWM_SET_DC   0x11
+#define     C1_BLDC             0x40
+#define     C2_BLDC_START       0x01
+#define     C2_BLDC_SET_F       0x10
+#define     C2_BLDC_SET_DC      0x11
+#define     C2_BLDC_FWD         0x20
+#define     C2_BLDC_REV         0x21
 
 #define     C1_COMM         0x41
 #define     C1_PID          0x42

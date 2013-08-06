@@ -71,10 +71,16 @@ static msg_t tSysCtrlCmdParser(void *arg) {
       }
 
       break;
-    case C1_PWM:
+    case C1_BLDC:
       switch (cmdBufp->cmd2) {
-      case C2_PWM_START:
-        startPwmGen(PWM_CLOCK_FREQ, PWM_PERIOD);
+      case C2_BLDC_START:
+        startPwmGen();
+        break;
+      case C2_BLDC_FWD:
+        bldcStateFwd();
+        break;
+      case C2_BLDC_REV:
+        bldcStateRev();
         break;
 
       default:
@@ -120,6 +126,8 @@ void startSysCtrl(void) {
    */
 
   startUsbControl();
+
+  startPwmGen();
 }
 
 
