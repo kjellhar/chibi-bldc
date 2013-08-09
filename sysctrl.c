@@ -45,6 +45,7 @@ static msg_t tSysCtrlCmdParser(void *arg) {
       startBldc();
       break;
     case CMD_BLDC1_STOP:
+      stopBldc();
       break;
     case CMD_BLDC1_DIRECTION:
       break;

@@ -94,6 +94,11 @@ extern void startBldc(void) {
   pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, pulseTime);
 }
 
+extern void stopBldc(void) {
+  palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
+  pwmStop(&PWMD1);
+}
+
 extern void bldcStateFwd(void) {
   if (state == stateCount-1) {
     stateNext = 0;
