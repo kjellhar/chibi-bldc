@@ -14,11 +14,9 @@
 #define CMD_MEM_POOL_SIZE   10
 
 typedef struct {
-	uint8_t		cmd1;
-	uint8_t		cmd2;
-	uint8_t		cmd3;
+	uint8_t		cmd;
 	uint8_t		pkgSize;
-	uint8_t		payload [60];
+	uint8_t		payload [62];
 } cmdPkg;
 
 

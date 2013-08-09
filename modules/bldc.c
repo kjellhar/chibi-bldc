@@ -77,7 +77,7 @@ static PWMConfig pwmcfg = {
 
 /* This function will start the PWM generator.
  */
-extern void startPwmGen(void) {
+extern void startBldc(void) {
   chSemInit (&semPwmCh0Compare, 0);
   chSemInit (&semPwmCounterReset, 0);
 

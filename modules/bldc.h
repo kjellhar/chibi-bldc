@@ -41,7 +41,7 @@ extern Semaphore semPwmCounterReset;
 extern Semaphore semPwmCh0Compare;
 
 
-extern void startPwmGen(void);
+extern void startBldc(void);
 extern void bldcStateFwd(void);
 extern void bldcStateRev(void);
 extern void bldcSetDutyCycle(uint32_t dutyCycle);

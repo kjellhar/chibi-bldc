@@ -8,28 +8,24 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
 
-#define     C1_SYS                  0x01
-#define     C2_SYS_LED1_ON          0xF0
-#define     C2_SYS_LED1_OFF         0xF1
-#define     C2_SYS_LED2_ON          0xF2
-#define     C2_SYS_LED2_OFF         0xF3
-#define     C2_SYS_LED3_ON          0xF4
-#define     C2_SYS_LED3_OFF         0xF5
-#define     C2_SYS_LED4_ON          0xF6
-#define     C2_SYS_LED4_OFF         0xF7
+#define		CMD_GET_STATUS		    0x00
+#define     CMD_ACK                 0x0E
+#define     CMD_NACK                0x0F
 
-#define     C1_BLDC             0x40
-#define     C2_BLDC_START       0x01
-#define     C2_BLDC_SET_F       0x10
-#define     C2_BLDC_SET_DC      0x11
-#define     C2_BLDC_FWD         0x20
-#define     C2_BLDC_REV         0x21
+#define		CMD_BLDC1_START		    0x80
+#define		CMD_BLDC1_STOP		    0x81
+#define     CMD_BLDC1_DIRECTION     0x82
+#define		CMD_BLDC1_PWM	        0x83
+#define		CMD_BLDC1_RPM           0x84
 
-#define     C1_COMM         0x41
-#define     C1_PID          0x42
-#define     C1_ZSENSE       0x43
-#define     C1_CSENSE       0x44
-
+#define     CMD_LED1_ON             0xF0
+#define     CMD_LED1_OFF            0xF1
+#define     CMD_LED2_ON             0xF2
+#define     CMD_LED2_OFF            0xF3
+#define     CMD_LED3_ON             0xF4
+#define     CMD_LED3_OFF            0xF5
+#define     CMD_LED4_ON             0xF6
+#define     CMD_LED4_OFF            0xF7
 
 
 

@@ -40,53 +40,41 @@ static msg_t tSysCtrlCmdParser(void *arg) {
 
     cmdBufp=(cmdPkg *)msg;
 
-    switch (cmdBufp->cmd1) {
-    case C1_SYS:
-
-      switch (cmdBufp->cmd2) {
-      case C2_SYS_LED1_ON:
-        palSetPad(GPIOD, GPIOD_LED3);
-        break;
-      case C2_SYS_LED1_OFF:
-        palClearPad(GPIOD, GPIOD_LED3);
-        break;
-      case C2_SYS_LED2_ON:
-        palSetPad(GPIOD, GPIOD_LED4);
-        break;
-      case C2_SYS_LED2_OFF:
-        palClearPad(GPIOD, GPIOD_LED4);
-        break;
-      case C2_SYS_LED3_ON:
-        palSetPad(GPIOD, GPIOD_LED5);
-        break;
-      case C2_SYS_LED3_OFF:
-        palClearPad(GPIOD, GPIOD_LED5);
-        break;
-      case C2_SYS_LED4_ON:
-        palSetPad(GPIOD, GPIOD_LED6);
-        break;
-      case C2_SYS_LED4_OFF:
-        palClearPad(GPIOD, GPIOD_LED6);
-        break;
-      }
-
+    switch (cmdBufp->cmd) {
+    case CMD_BLDC1_START:
+      startBldc();
       break;
-    case C1_BLDC:
-      switch (cmdBufp->cmd2) {
-      case C2_BLDC_START:
-        startPwmGen();
-        break;
-      case C2_BLDC_FWD:
-        bldcStateFwd();
-        break;
-      case C2_BLDC_REV:
-        bldcStateRev();
-        break;
-
-      default:
-        break;
-      }
-
+    case CMD_BLDC1_STOP:
+      break;
+    case CMD_BLDC1_DIRECTION:
+      break;
+    case CMD_BLDC1_PWM:
+      break;
+    case CMD_BLDC1_RPM:
+      break;
+    case CMD_LED1_ON:
+      palSetPad(GPIOD, GPIOD_LED3);
+      break;
+    case CMD_LED1_OFF:
+      palClearPad(GPIOD, GPIOD_LED3);
+      break;
+    case CMD_LED2_ON:
+      palSetPad(GPIOD, GPIOD_LED4);
+      break;
+    case CMD_LED2_OFF:
+      palClearPad(GPIOD, GPIOD_LED4);
+      break;
+    case CMD_LED3_ON:
+      palSetPad(GPIOD, GPIOD_LED5);
+      break;
+    case CMD_LED3_OFF:
+      palClearPad(GPIOD, GPIOD_LED5);
+      break;
+    case CMD_LED4_ON:
+      palSetPad(GPIOD, GPIOD_LED6);
+      break;
+    case CMD_LED4_OFF:
+      palClearPad(GPIOD, GPIOD_LED6);
       break;
     default:
       break;
@@ -95,10 +83,8 @@ static msg_t tSysCtrlCmdParser(void *arg) {
     chPoolFree (&cmdMemPool, cmdBufp);
 
     cmdBufp = chPoolAlloc (&cmdMemPool);
-    cmdBufp->cmd1 = 0xFF;
-    cmdBufp->pkgSize = 6;
-    cmdBufp->payload[0] = 'O';
-    cmdBufp->payload[1] = 'K';
+    cmdBufp->cmd = CMD_ACK;
+    cmdBufp->pkgSize = 2;
 
     chMBPost (&cmdOutMailbox, (msg_t)cmdBufp, TIME_INFINITE);
 
@@ -126,8 +112,6 @@ void startSysCtrl(void) {
    */
 
   startUsbControl();
-
-  startPwmGen();
 }
 
 
