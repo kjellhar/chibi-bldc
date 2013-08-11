@@ -31,6 +31,8 @@ static uint8_t pwmScheme[6][2] = {{PWM_UP|PWM_VN, PWM_VN},  //UP PWM, VN ON
 uint32_t stateCount;
 uint32_t pulseTime;
 uint32_t state, stateNext;
+uint32_t erps;      // Electrical revolutions pr sec * 1000
+
 
 /* The PWM Counter Reset will put the PWM system in "ACTIVE" state, which
  * is defined as the state when the channel is active and a compare event
@@ -60,7 +62,6 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
   state = stateNext;
 }
 
-
 static PWMConfig pwmcfg = {
                            PWM_CLOCK_FREQ,
                            PWM_PERIOD,
@@ -75,6 +76,23 @@ static PWMConfig pwmcfg = {
 };
 
 
+static WORKING_AREA(waBldcComm, BLDC_COMM_STACK_SIZE);
+static msg_t tBldcComm(void *arg) {
+  (void)arg;
+  chRegSetThreadName("BldcComm");
+
+  uint32_t currentAngle;     // Angle in degrees * 1000
+  uint32_t next_comm;   // Angle of next commutation
+
+  currentAngle = 0;          //Start at 0.000 deg
+
+  while (TRUE) {
+    chSemWait(&semPwmCounterReset);
+
+  }
+  return 0;
+}
+
 /* This function will start the PWM generator.
  */
 extern void startBldc(void) {
@@ -88,6 +106,11 @@ extern void startBldc(void) {
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);
 
+  chThdCreateStatic(waBldcComm,
+                    sizeof(waBldcComm),
+                    NORMALPRIO,
+                    tBldcComm,
+                    NULL);
 
   pwmStart(&PWMD1, &pwmcfg);
   pulseTime = PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 1000);   //Default to 10% duty cycle

@@ -7,6 +7,7 @@
 #ifndef BLDC_H_
 #define BLDC_H_
 
+#define BLDC_COMM_STACK_SIZE    1024
 
 /*
  * Defines the states for different signals in the commutation scheme
@@ -24,7 +25,8 @@
 #define PWM_STACK_SIZE      1024
 
 #define PWM_CLOCK_FREQ        10000000
-#define PWM_PERIOD            10000
+#define PWM_PERIOD            1000
+#define PWM_FREQ              PWM_CLOCK_FREQ/PWM_PERIOD
 
 
 #define PWM_OUT_PORT_MASK   0x3F
