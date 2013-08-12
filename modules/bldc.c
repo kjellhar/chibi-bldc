@@ -27,11 +27,21 @@ static uint8_t pwmScheme[6][2] = {{PWM_UP|PWM_VN, PWM_VN},  //UP PWM, VN ON
                                   {PWM_WP|PWM_VN, PWM_VN}   //WP PWM, VN ON
 };
 
-
+/* Number of states in PWM scheme*/
 uint32_t stateCount;
+
+/* The length of the pulse in timer ticks*/
 uint32_t pulseTime;
+
+/* The current and the next state in the PWM scheme*/
 uint32_t state, stateNext;
+
+/* Time for last and next state change */
+uint32_t lastStateChange, nextStateChange;
+
+/* Electrical revolutions pr second   erps = RPM*Polecount/(2*60) */
 uint32_t erps;      // Electrical revolutions pr sec * 1000
+
 
 
 /* The PWM Counter Reset will put the PWM system in "ACTIVE" state, which
@@ -40,6 +50,11 @@ uint32_t erps;      // Electrical revolutions pr sec * 1000
  */
 static void cdPwmCounterReset(PWMDriver *pwmp) {
   (void) pwmp;
+
+  if (halGetCounterValue()-lastStateChange > nextStateChange-lastStateChange &&
+      halGetCounterValue()-lastStateChange < US2RTT(STATE_CHANGE_LIMIT_US)) {
+    state = stateNext;
+  }
 
   chSysLockFromIsr();
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, pwmScheme[state][0]);
@@ -58,8 +73,6 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  pwmScheme[state][1]);
   chSemResetI(&semPwmCh0Compare, 0);
   chSysUnlockFromIsr();
-
-  state = stateNext;
 }
 
 static PWMConfig pwmcfg = {

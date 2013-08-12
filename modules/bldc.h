@@ -28,6 +28,8 @@
 #define PWM_PERIOD            1000
 #define PWM_FREQ              PWM_CLOCK_FREQ/PWM_PERIOD
 
+#define STATE_CHANGE_LIMIT_US 10*1000000/PWM_FREQ
+
 
 #define PWM_OUT_PORT_MASK   0x3F
 #define PWM_OUT_PORT        GPIOE
