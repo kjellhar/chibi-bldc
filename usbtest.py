@@ -62,11 +62,11 @@ else:
 
 
 #ep_out.write([chr(42), chr(inp), chr(0), chr(4)])
-ep_out.write([chr(64), chr(32), chr(0), chr(4)])
+ep_out.write([chr(128), chr(2)])
 
 try:
 	ret = ep_in.read(64)
-	if ret[0] == 255:
+	if ret[0] == 14:
 		print ('Ack received')
 		txt = map(unichr, ret[2:2+ret[1]])
 		print (''.join(txt))

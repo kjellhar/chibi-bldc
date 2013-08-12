@@ -7,6 +7,17 @@
 #ifndef BLDC_H_
 #define BLDC_H_
 
+typedef struct {
+  uint8_t   (*scheme)[][2];
+  uint32_t  state;
+  uint32_t  nextState;
+  uint32_t  stateCount;
+  uint32_t  prevStateChange;
+  uint32_t  nextStateChange;
+  uint32_t  stateChangeInterval;
+  bool      directionFwd;
+} BldcConfig;
+
 #define BLDC_COMM_STACK_SIZE    1024
 
 /*
@@ -24,9 +35,10 @@
 
 #define PWM_STACK_SIZE      1024
 
-#define PWM_CLOCK_FREQ        10000000
-#define PWM_PERIOD            1000
-#define PWM_FREQ              PWM_CLOCK_FREQ/PWM_PERIOD
+#define PWM_CLOCK_FREQ        16800000
+#define PWM_FREQ              10000
+#define PWM_PERIOD            PWM_CLOCK_FREQ/PWM_FREQ
+
 
 #define STATE_CHANGE_LIMIT_US 10*1000000/PWM_FREQ
 
@@ -40,15 +52,8 @@
 
 #define TIME1_LIMIT         100
 
-
-extern Semaphore semPwmCounterReset;
-extern Semaphore semPwmCh0Compare;
-
-
 extern void startBldc(void);
 extern void stopBldc(void);
-extern void bldcStateFwd(void);
-extern void bldcStateRev(void);
 extern void bldcSetDutyCycle(uint32_t dutyCycle);
 
 #endif /* BLDC_H_ */

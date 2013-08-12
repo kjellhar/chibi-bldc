@@ -113,6 +113,7 @@ void startSysCtrl(void) {
    */
 
   startUsbControl();
+  startBldc();
 }
 
 
