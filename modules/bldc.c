@@ -16,12 +16,12 @@
  * PWM Scheme:  High PWM, Lo ON
  * Time0 Time1
  */
-static uint8_t pwmScheme[6][2] = {{PWM_UP|PWM_VN, PWM_VN},  //UP PWM, VN ON
-                                  {PWM_UP|PWM_WN, PWM_WN},  //UP PWM, WN ON
-                                  {PWM_VP|PWM_WN, PWM_WN},  //VP PWM, WN ON
-                                  {PWM_VP|PWM_UN, PWM_UN},  //VP PWM, UN ON
-                                  {PWM_WP|PWM_UN, PWM_UN},  //WP PWM, UN ON
-                                  {PWM_WP|PWM_VN, PWM_VN}   //WP PWM, VN ON
+static uint8_t pwmScheme[6][3] = {{PWM_UP|PWM_VN, PWM_VN, !PWM_EXPECT_ZERO},    //UP PWM, VN ON
+                                  {PWM_UP|PWM_WN, PWM_WN, PWM_EXPECT_ZERO},     //UP PWM, WN ON
+                                  {PWM_VP|PWM_WN, PWM_WN, !PWM_EXPECT_ZERO},    //VP PWM, WN ON
+                                  {PWM_VP|PWM_UN, PWM_UN, PWM_EXPECT_ZERO},     //VP PWM, UN ON
+                                  {PWM_WP|PWM_UN, PWM_UN, !PWM_EXPECT_ZERO},    //WP PWM, UN ON
+                                  {PWM_WP|PWM_VN, PWM_VN, PWM_EXPECT_ZERO}      //WP PWM, VN ON
 };
 
 BldcConfig  bldc;
@@ -33,13 +33,13 @@ BldcConfig  bldc;
 static void cdPwmCounterReset(PWMDriver *pwmp) {
   (void) pwmp;
 
-  bldc.state = bldc.nextState;
   chSysLockFromIsr();
-  palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, (*bldc.scheme)[bldc.state][0]);
+  palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  bldc.pwmOutT0);
   chSysUnlockFromIsr();
 
 
   // Calculate and initiate the state change
+  // Consider moving this to a thread to further slim down the ISR callback
   if (!halIsCounterWithin(bldc.prevStateChange, bldc.nextStateChange)) {
 
     // Prepare next state
@@ -68,8 +68,14 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
   (void) pwmp;
 
   chSysLockFromIsr();
-  palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  (*bldc.scheme)[bldc.state][1]);
+  palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  bldc.pwmOutT1);
   chSysUnlockFromIsr();
+
+  // Do the state change before the next cycle.
+  // Consider moving this to a thread to further slim down the ISR callback
+  bldc.state = bldc.nextState;
+  bldc.pwmOutT0 = (*bldc.scheme)[bldc.state][0];
+  bldc.pwmOutT1 = (*bldc.scheme)[bldc.state][1];
 }
 
 static PWMConfig pwmcfg = {
@@ -97,8 +103,10 @@ extern void startBldc(void) {
   bldc.stateChangeInterval = US2RTT(160);
   bldc.prevStateChange = halGetCounterValue();
   bldc.nextStateChange = bldc.prevStateChange + bldc.stateChangeInterval;
+  bldc.pwmOutT0 = 0;
+  bldc.pwmOutT1 = 0;
 
-  bldc.stateCount = sizeof(pwmScheme)/2;
+  bldc.stateCount = sizeof(pwmScheme)/3;
 
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);

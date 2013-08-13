@@ -8,7 +8,9 @@
 #define BLDC_H_
 
 typedef struct {
-  uint8_t   (*scheme)[][2];
+  uint8_t   (*scheme)[][3];
+  uint8_t   pwmOutT0;
+  uint8_t   pwmOutT1;
   uint32_t  state;
   uint32_t  nextState;
   uint32_t  stateCount;
@@ -30,7 +32,7 @@ typedef struct {
 #define PWM_VN      0b001000
 #define PWM_WP      0b010000
 #define PWM_WN      0b100000
-
+#define PWM_EXPECT_ZERO     TRUE
 
 
 #define PWM_STACK_SIZE      1024
