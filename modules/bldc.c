@@ -96,16 +96,14 @@ static PWMConfig pwmcfg = {
  */
 extern void startBldc(void) {
   bldc.scheme = &pwmScheme;
-
   bldc.state = 0;          //Default to first state
+  bldc.nextState = 0;
   bldc.directionFwd = TRUE;
-
   bldc.stateChangeInterval = US2RTT(160);
   bldc.prevStateChange = halGetCounterValue();
   bldc.nextStateChange = bldc.prevStateChange + bldc.stateChangeInterval;
   bldc.pwmOutT0 = 0;
   bldc.pwmOutT1 = 0;
-
   bldc.stateCount = sizeof(pwmScheme)/3;
 
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
