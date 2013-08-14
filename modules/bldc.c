@@ -122,6 +122,10 @@ extern void startBldc(void) {
   // ADC trigger channel. This will trigger the ADC read at 95% of the cycle,
   // when all the PWM outputs are set to 0
   pwmEnableChannel (&PWMD1, PWM_ADCTRIG_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, PWM_MAX_DUTY_CYCLE));
+
+  // Start the ADC
+  adcStart(&ADCD1, NULL);
+
 }
 
 extern void stopBldc(void) {
