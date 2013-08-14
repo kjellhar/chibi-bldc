@@ -41,6 +41,8 @@ typedef struct {
 #define PWM_FREQ              10000
 #define PWM_PERIOD            PWM_CLOCK_FREQ/PWM_FREQ
 
+#define PWM_MAX_DUTY_CYCLE    9500
+
 
 #define STATE_CHANGE_LIMIT_US 10*1000000/PWM_FREQ
 
@@ -51,6 +53,7 @@ typedef struct {
 
 
 #define PWM_PULSE0_CH       0
+#define PWM_ADCTRIG_CH      3
 
 #define TIME1_LIMIT         100
 

@@ -78,6 +78,12 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
   bldc.pwmOutT1 = (*bldc.scheme)[bldc.state][1];
 }
 
+
+static void pcbPwmAdcTrigger(PWMDriver *pwmp) {
+  (void) pwmp;
+
+}
+
 static PWMConfig pwmcfg = {
                            PWM_CLOCK_FREQ,
                            PWM_PERIOD,
@@ -86,7 +92,7 @@ static PWMConfig pwmcfg = {
                             {PWM_OUTPUT_ACTIVE_HIGH, &cbPwmCh0Compare},
                             {PWM_OUTPUT_DISABLED, NULL},
                             {PWM_OUTPUT_DISABLED, NULL},
-                            {PWM_OUTPUT_DISABLED, NULL}
+                            {PWM_OUTPUT_ACTIVE_HIGH, &pcbPwmAdcTrigger}
                            },
                            0,
 };
@@ -110,7 +116,13 @@ extern void startBldc(void) {
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);
 
   pwmStart(&PWMD1, &pwmcfg);
-  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 1000));  //Default to 10% duty cycle
+
+  // The PWM output generator channel. Defaults to 10% at startup
+  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 1000));
+
+  // ADC trigger channel. This will trigger the ADC read at 95% of the cycle,
+  // when all the PWM outputs are set to 0
+  pwmEnableChannel (&PWMD1, PWM_ADCTRIG_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, PWM_MAX_DUTY_CYCLE));
 }
 
 extern void stopBldc(void) {
@@ -118,8 +130,14 @@ extern void stopBldc(void) {
   pwmStop(&PWMD1);
 }
 
+
+// This function should probably be replaced by a Mailbox and a thread.
 extern void bldcSetDutyCycle(uint32_t dutyCycle) {
   uint32_t pulseTime;
+
+  if (dutyCycle > PWM_MAX_DUTY_CYCLE) {
+    dutyCycle = PWM_MAX_DUTY_CYCLE;
+  }
 
   pulseTime = PWM_PERCENTAGE_TO_WIDTH(&PWMD1, dutyCycle);
   pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, pulseTime);
