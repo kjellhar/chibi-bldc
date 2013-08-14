@@ -35,8 +35,6 @@ static void cdPwmCounterReset(PWMDriver *pwmp) {
 
   chSysLockFromIsr();
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  bldc.pwmOutT0);
-  chSysUnlockFromIsr();
-
 
   // Calculate and initiate the state change
   // Consider moving this to a thread to further slim down the ISR callback
@@ -57,6 +55,7 @@ static void cdPwmCounterReset(PWMDriver *pwmp) {
     bldc.prevStateChange = bldc.nextStateChange;
     bldc.nextStateChange += bldc.stateChangeInterval;
   }
+  chSysUnlockFromIsr();
 }
 
 
@@ -69,13 +68,13 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
 
   chSysLockFromIsr();
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  bldc.pwmOutT1);
-  chSysUnlockFromIsr();
 
   // Do the state change before the next cycle.
   // Consider moving this to a thread to further slim down the ISR callback
   bldc.state = bldc.nextState;
   bldc.pwmOutT0 = (*bldc.scheme)[bldc.state][0];
   bldc.pwmOutT1 = (*bldc.scheme)[bldc.state][1];
+  chSysUnlockFromIsr();
 }
 
 
