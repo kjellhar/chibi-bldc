@@ -26,12 +26,12 @@ typedef struct {
  * Defines the states for different signals in the commutation scheme
  */
 #define PWM_OFF     0b000000
-#define PWM_UP      0b000001
-#define PWM_UN      0b000010
-#define PWM_VP      0b000100
-#define PWM_VN      0b001000
-#define PWM_WP      0b010000
-#define PWM_WN      0b100000
+#define PWM_UN      0b000001
+#define PWM_UP      0b000010
+#define PWM_VN      0b000100
+#define PWM_VP      0b001000
+#define PWM_WN      0b010000
+#define PWM_WP      0b100000
 #define PWM_EXPECT_ZERO     TRUE
 
 
