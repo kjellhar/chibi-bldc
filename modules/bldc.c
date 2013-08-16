@@ -12,6 +12,39 @@
 
 #include "bldc.h"
 
+
+
+static adcsample_t zeroCrossing;
+
+static void cbAdcZeroSense(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
+  (void) adcp;
+  (void) n;
+
+  adcsample_t  res;
+
+  res = *buffer;
+}
+
+/*
+ * ADC conversion group.
+ * Mode:        Linear buffer, 1 sample of 1 channel, SW triggered.
+ * Channels:    IN1.
+ */
+static const ADCConversionGroup adcZeroSense = {
+  FALSE,
+  1,
+  &cbAdcZeroSense,
+  NULL,
+  0,                        /* CR1 */
+  ADC_CR2_SWSTART,          /* CR2 */
+  0,
+  ADC_SMPR2_SMP_AN1(ADC_SAMPLE_15),                        /* SMPR2 */
+  ADC_SQR1_NUM_CH(1),
+  0,                        /* SQR2 */
+  ADC_SQR3_SQ1_N(ADC_CHANNEL_IN1)
+};
+
+
 /*
  * PWM Scheme:  High PWM, Lo ON
  * Time0 Time1
@@ -80,7 +113,7 @@ static void cbPwmCh0Compare(PWMDriver *pwmp) {
 
 static void pcbPwmAdcTrigger(PWMDriver *pwmp) {
   (void) pwmp;
-
+  adcStartConversion(&ADCD1, &adcZeroSense, &zeroCrossing, 1);
 }
 
 static PWMConfig pwmcfg = {
@@ -113,6 +146,7 @@ extern void startBldc(void) {
 
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);
+  palSetPadMode (GPIOA, GPIOA_PIN1, PAL_MODE_INPUT_ANALOG);
 
   pwmStart(&PWMD1, &pwmcfg);
 
