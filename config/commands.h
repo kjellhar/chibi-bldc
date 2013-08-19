@@ -12,11 +12,13 @@
 #define     CMD_ACK                 0x0E
 #define     CMD_NACK                0x0F
 
-#define		CMD_BLDC1_START		    0x80
-#define		CMD_BLDC1_STOP		    0x81
-#define     CMD_BLDC1_DIRECTION     0x82
-#define		CMD_BLDC1_PWM	        0x83
-#define		CMD_BLDC1_RPM           0x84
+#define		CMD_BLDC1_INIT		    0x80
+#define		CMD_BLDC1_KILL		    0x81
+#define     CMD_BLDC1_START         0x82
+#define     CMD_BLDC1_STOP          0x83
+#define     CMD_BLDC1_DIRECTION     0x84
+#define		CMD_BLDC1_DUTYCYCLE	    0x85
+#define		CMD_BLDC1_RPM           0x86
 
 #define     CMD_LED1_ON             0xF0
 #define     CMD_LED1_OFF            0xF1

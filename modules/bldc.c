@@ -132,7 +132,7 @@ static PWMConfig pwmcfg = {
 
 /* This function will start the PWM generator.
  */
-extern void startBldc(void) {
+extern void bldcInit(void) {
   bldc.scheme = &pwmScheme;
   bldc.state = 0;          //Default to first state
   bldc.nextState = 0;
@@ -143,15 +143,13 @@ extern void startBldc(void) {
   bldc.pwmOutT0 = 0;
   bldc.pwmOutT1 = 0;
   bldc.stateCount = sizeof(pwmScheme)/3;
+  bldc.dutyCycle = 1000;
 
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);
   palSetPadMode (GPIOA, GPIOA_PIN1, PAL_MODE_INPUT_ANALOG);
 
   pwmStart(&PWMD1, &pwmcfg);
-
-  // The PWM output generator channel. Defaults to 10% at startup
-  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, 1000));
 
   // ADC trigger channel. This will trigger the ADC read at 95% of the cycle,
   // when all the PWM outputs are set to 0
@@ -162,20 +160,33 @@ extern void startBldc(void) {
 
 }
 
-extern void stopBldc(void) {
+extern void bldcKill(void) {
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   pwmStop(&PWMD1);
+}
+
+extern void bldcStart(void) {
+  // The PWM output generator channel.
+  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, bldc.dutyCycle));
 }
 
 
 // This function should probably be replaced by a Mailbox and a thread.
 extern void bldcSetDutyCycle(uint32_t dutyCycle) {
-  uint32_t pulseTime;
-
   if (dutyCycle > PWM_MAX_DUTY_CYCLE) {
     dutyCycle = PWM_MAX_DUTY_CYCLE;
   }
 
-  pulseTime = PWM_PERCENTAGE_TO_WIDTH(&PWMD1, dutyCycle);
-  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, pulseTime);
+  bldc.dutyCycle = dutyCycle;
+
+  pwmEnableChannel (&PWMD1, PWM_PULSE0_CH, PWM_PERCENTAGE_TO_WIDTH(&PWMD1, dutyCycle));
+}
+
+// This function is, in this form, only for debugging. Later, it may
+// be used when the RPM is controlled by a PID.
+extern void bldcSetRPM (uint32_t rpm) {
+  uint32_t uspc;  // us pr Commutations
+
+  uspc = (1000000*60 / (rpm*bldc.stateCount));
+  bldc.stateChangeInterval = US2RTT(uspc);
 }

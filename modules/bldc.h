@@ -18,6 +18,7 @@ typedef struct {
   uint32_t  nextStateChange;
   uint32_t  stateChangeInterval;
   bool      directionFwd;
+  uint32_t  dutyCycle;
 } BldcConfig;
 
 #define BLDC_COMM_STACK_SIZE    1024
@@ -57,8 +58,10 @@ typedef struct {
 
 #define TIME1_LIMIT         100
 
-extern void startBldc(void);
-extern void stopBldc(void);
+extern void bldcInit(void);
+extern void bldcKill(void);
+extern void bldcStart(void);
 extern void bldcSetDutyCycle(uint32_t dutyCycle);
+extern void bldcSetRPM (uint32_t rpm);
 
 #endif /* BLDC_H_ */

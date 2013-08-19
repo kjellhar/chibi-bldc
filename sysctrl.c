@@ -35,17 +35,25 @@ static msg_t tSysCtrlCmdParser(void *arg) {
     cmdBufp=(cmdPkg*)usbBufp->packet;
 
     switch (cmdBufp->cmd) {
-    case CMD_BLDC1_START:
-      startBldc();
+    case CMD_BLDC1_INIT:
+      bldcInit();
       break;
-    case CMD_BLDC1_STOP:
-      stopBldc();
+    case CMD_BLDC1_KILL:
+      bldcKill();
+      break;
+    case CMD_BLDC1_START:
+      bldcStart();
       break;
     case CMD_BLDC1_DIRECTION:
       break;
-    case CMD_BLDC1_PWM:
+    case CMD_BLDC1_DUTYCYCLE:
+      bldcSetDutyCycle ((uint32_t)(cmdBufp->payload[0]<<24 ||
+                                   cmdBufp->payload[1]<<16 ||
+                                   cmdBufp->payload[2]<<8 ||
+                                   cmdBufp->payload[3]));
       break;
     case CMD_BLDC1_RPM:
+      bldcSetRPM ((uint32_t)((cmdBufp->payload[0]<<8) + (cmdBufp->payload[1])));
       break;
     case CMD_LED1_ON:
       palSetPad(GPIOD, GPIOD_LED3);
@@ -104,8 +112,6 @@ void startSysCtrl(void) {
 
   startUsbControl();
   usbGetMailboxes (&cmdRXMailbox, &cmdTXMailbox);
-
-  startBldc();
 }
 
 
