@@ -11,21 +11,12 @@
 #include "sysctrl.h"
 #include "commands.h"
 
-#include "usbcfg.h"
+#include "usbdevice.h"
 
 #include "bldc.h"
 
-
-cmdPkg cmdMemPoolBuffer[CMD_MEM_POOL_SIZE];
-MemoryPool cmdMemPool;
-
-uint8_t* cmdOutMailboxBuffer[CMD_MAILBOX_SIZE];
-uint8_t* cmdInMailboxBuffer[CMD_MAILBOX_SIZE];
-
-Mailbox cmdInMailbox;
-Mailbox cmdOutMailbox;
-
-
+static Mailbox* cmdTXMailbox;
+static Mailbox* cmdRXMailbox;
 
 static WORKING_AREA(waSysCtrlCmdParser, SYS_CTRL_STACK_SIZE);
 static msg_t tSysCtrlCmdParser(void *arg) {
@@ -33,12 +24,15 @@ static msg_t tSysCtrlCmdParser(void *arg) {
   chRegSetThreadName("SysCtrlCmdParser");
 
   msg_t msg;
-  cmdPkg *cmdBufp;
+  usbPacket* usbBufp;
+  cmdPkg* cmdBufp;
+
 
   while (TRUE) {
-    chMBFetch (&cmdInMailbox, &msg, TIME_INFINITE);
+    chMBFetch (cmdRXMailbox, &msg, TIME_INFINITE);
 
-    cmdBufp=(cmdPkg *)msg;
+    usbBufp=(usbPacket*)msg;
+    cmdBufp=(cmdPkg*)usbBufp->packet;
 
     switch (cmdBufp->cmd) {
     case CMD_BLDC1_START:
@@ -81,13 +75,15 @@ static msg_t tSysCtrlCmdParser(void *arg) {
       break;
     }
 
-    chPoolFree (&cmdMemPool, cmdBufp);
+    usbFreeMailboxBuffer (usbBufp);
 
-    cmdBufp = chPoolAlloc (&cmdMemPool);
+    usbBufp = usbAllocMailboxBuffer();
+    cmdBufp=(cmdPkg*)usbBufp->packet;
     cmdBufp->cmd = CMD_ACK;
     cmdBufp->pkgSize = 2;
+    usbBufp->size = 2;
 
-    chMBPost (&cmdOutMailbox, (msg_t)cmdBufp, TIME_INFINITE);
+    chMBPost (cmdTXMailbox, (msg_t)usbBufp, TIME_INFINITE);
 
   }
   return 0;
@@ -95,12 +91,6 @@ static msg_t tSysCtrlCmdParser(void *arg) {
 
 
 void startSysCtrl(void) {
-  chPoolInit (&cmdMemPool, sizeof(cmdPkg), NULL);
-  chPoolLoadArray(&cmdMemPool, &cmdMemPoolBuffer, CMD_MEM_POOL_SIZE);
-
-  chMBInit (&cmdOutMailbox, (msg_t *)cmdOutMailboxBuffer, CMD_MAILBOX_SIZE);
-  chMBInit (&cmdInMailbox, (msg_t *)cmdInMailboxBuffer, CMD_MAILBOX_SIZE);
-
   chThdCreateStatic(waSysCtrlCmdParser,
                     sizeof(waSysCtrlCmdParser),
                     NORMALPRIO,
@@ -113,6 +103,8 @@ void startSysCtrl(void) {
    */
 
   startUsbControl();
+  usbGetMailboxes (&cmdRXMailbox, &cmdTXMailbox);
+
   startBldc();
 }
 

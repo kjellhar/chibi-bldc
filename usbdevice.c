@@ -9,7 +9,7 @@
 #include "hal.h"
 
 #include "usb.h"
-#include "usbcfg.h"
+#include "usbdevice.h"
 #include "usbdescriptor.h"
 #include "sysctrl.h"
 
@@ -17,6 +17,14 @@
 
 USBDriver *  	usbp = &USBD1;
 
+static Mailbox usbTXMailbox;
+static Mailbox usbRXMailbox;
+
+static usbPacket usbMemPoolBuffer[USB_MEM_POOL_SIZE];
+static MemoryPool usbMemPool;
+
+static uint8_t* usbTXMailboxBuffer[USB_MAILBOX_SIZE];
+static uint8_t* usbRXMailboxBuffer[USB_MAILBOX_SIZE];
 
 EVENTSOURCE_DECL(esUsbConfigured);
 EVENTSOURCE_DECL(esUsbReset);
@@ -206,7 +214,7 @@ static msg_t tUsbTx(void *arg) {
 
 
   msg_t msg;
-  cmdPkg *cmdBufp;
+  usbPacket *usbBufp;
 
   enum {UsbTxComleteID = 0, UsbResetID = 1, UsbConfiguredID = 2};
 
@@ -226,7 +234,7 @@ static msg_t tUsbTx(void *arg) {
   chEvtGetAndClearEvents(EVENT_MASK(UsbTxComleteID) | EVENT_MASK(UsbResetID));
 
   while (TRUE) {
-    chMBFetch (&cmdOutMailbox, &msg, TIME_INFINITE);
+    chMBFetch (&usbTXMailbox, &msg, TIME_INFINITE);
 
     // Check if USB has been reconfigured while waiting for message from sysctrl
     activeEvents = chEvtGetAndClearEvents(EVENT_MASK(UsbConfiguredID));
@@ -236,10 +244,10 @@ static msg_t tUsbTx(void *arg) {
     }
 
     // Typecast Mailbox message to command package pointer for readability
-    cmdBufp = (cmdPkg*)msg;
+    usbBufp = (usbPacket*)msg;
 
     // Prepare transmit and start the transmission. This operation will return immediately
-    usbPrepareTransmit(usbp, EP_IN, (uint8_t*)cmdBufp, (size_t)cmdBufp->pkgSize);
+    usbPrepareTransmit(usbp, EP_IN, usbBufp->packet, (size_t)usbBufp->size);
     chSysLock();
     usbStartTransmitI(usbp, EP_IN);
     chSysUnlock();
@@ -252,7 +260,7 @@ static msg_t tUsbTx(void *arg) {
       // Clear any events that has occurred while the usb was not configured.
       chEvtGetAndClearEvents(EVENT_MASK(UsbTxComleteID) | EVENT_MASK(UsbResetID));
     }
-    chPoolFree (&cmdMemPool, cmdBufp);
+    usbFreeMailboxBuffer (usbBufp);
   }
   return 0;
 }
@@ -269,7 +277,7 @@ static msg_t tUsbRx(void *arg) {
 
   enum {UsbRxComleteID = 0, UsbResetID = 1, UsbConfiguredID = 2};
 
-  cmdPkg *cmdBufp;
+  usbPacket *usbBufp;
 
   EventListener elUsbRxComplete;
   EventListener elUsbReset;
@@ -289,10 +297,10 @@ static msg_t tUsbRx(void *arg) {
   while (TRUE) {
 
     // Allocate buffer space for reception of package in the sysctrl mempool
-    cmdBufp = chPoolAlloc (&cmdMemPool);
+    usbBufp = usbAllocMailboxBuffer();
 
     // Prepare receive operation and initiate the usb system to listen
-    usbPrepareReceive(usbp, EP_OUT, (uint8_t*)cmdBufp, 64);
+    usbPrepareReceive(usbp, EP_OUT, usbBufp->packet, 64);
     chSysLock();
     usbStartReceiveI(usbp, EP_OUT);
     chSysUnlock();
@@ -302,16 +310,16 @@ static msg_t tUsbRx(void *arg) {
 
     if (activeEvents == EVENT_MASK(UsbResetID)) {
       // If the system was reset, clean up and wait for new configure.
-      chPoolFree (&cmdMemPool, cmdBufp);
+      usbFreeMailboxBuffer (usbBufp);
       chEvtWaitOne(EVENT_MASK(UsbConfiguredID));
       chEvtGetAndClearEvents(EVENT_MASK(UsbRxComleteID) | EVENT_MASK(UsbResetID));
     }
     else {
       // Post pagckage to sysctrl if receive was successful
-      chMBPost (&cmdInMailbox, (msg_t)cmdBufp, TIME_INFINITE);
+      usbBufp->size = ep2outstate.rxcnt;
+      chMBPost (&usbRXMailbox, (msg_t)usbBufp, TIME_INFINITE);
     }
   }
-
 
   return 0;
 }
@@ -320,11 +328,30 @@ static msg_t tUsbRx(void *arg) {
  * Start all usb related threads and initiate the USB subsytem.
  */
 void startUsbControl(void) {
+  chMBInit (&usbTXMailbox, (msg_t *)usbTXMailboxBuffer, USB_MAILBOX_SIZE);
+  chMBInit (&usbRXMailbox, (msg_t *)usbRXMailboxBuffer, USB_MAILBOX_SIZE);
+
+  chPoolInit (&usbMemPool, USB_PACKET_SIZE, NULL);
+  chPoolLoadArray(&usbMemPool, &usbMemPoolBuffer, USB_MEM_POOL_SIZE);
+
   chThdCreateStatic(waUsbTx, sizeof(waUsbTx), NORMALPRIO, tUsbTx, NULL);
   chThdCreateStatic(waUsbRx, sizeof(waUsbRx), NORMALPRIO, tUsbRx, NULL);
 
   //Start and Connect USB
   usbStart(usbp, &config);
   usbConnectBus(usbp);
+}
+
+void* usbAllocMailboxBuffer(void){
+  return chPoolAlloc(&usbMemPool);
+}
+
+void usbFreeMailboxBuffer (void* buffer) {
+  chPoolFree (&usbMemPool, buffer);
+}
+
+void usbGetMailboxes (Mailbox** RXMailbox, Mailbox** TXMailbox) {
+  *RXMailbox = &usbRXMailbox;
+  *TXMailbox = &usbTXMailbox;
 }
 

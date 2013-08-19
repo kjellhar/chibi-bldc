@@ -137,7 +137,7 @@ extern void startBldc(void) {
   bldc.state = 0;          //Default to first state
   bldc.nextState = 0;
   bldc.directionFwd = TRUE;
-  bldc.stateChangeInterval = US2RTT(160);
+  bldc.stateChangeInterval = MS2RTT(20);
   bldc.prevStateChange = halGetCounterValue();
   bldc.nextStateChange = bldc.prevStateChange + bldc.stateChangeInterval;
   bldc.pwmOutT0 = 0;
