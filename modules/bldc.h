@@ -39,7 +39,7 @@ typedef struct {
 #define PWM_STACK_SIZE      1024
 
 #define PWM_CLOCK_FREQ        16800000
-#define PWM_FREQ              10000
+#define PWM_FREQ              5000
 #define PWM_PERIOD            PWM_CLOCK_FREQ/PWM_FREQ
 
 #define PWM_MAX_DUTY_CYCLE    9500

@@ -143,7 +143,7 @@ extern void bldcInit(void) {
   bldc.pwmOutT0 = 0;
   bldc.pwmOutT1 = 0;
   bldc.stateCount = sizeof(pwmScheme)/3;
-  bldc.dutyCycle = 1000;
+  bldc.dutyCycle = 1800;
 
   palWriteGroup (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET,  PWM_OFF);
   palSetGroupMode (PWM_OUT_PORT, PWM_OUT_PORT_MASK, PWM_OUT_OFFSET, PAL_MODE_OUTPUT_PUSHPULL);

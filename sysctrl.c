@@ -26,6 +26,7 @@ static msg_t tSysCtrlCmdParser(void *arg) {
   msg_t msg;
   usbPacket* usbBufp;
   cmdPkg* cmdBufp;
+  uint32_t dc;
 
 
   while (TRUE) {
@@ -47,10 +48,11 @@ static msg_t tSysCtrlCmdParser(void *arg) {
     case CMD_BLDC1_DIRECTION:
       break;
     case CMD_BLDC1_DUTYCYCLE:
-      bldcSetDutyCycle ((uint32_t)(cmdBufp->payload[0]<<24 ||
-                                   cmdBufp->payload[1]<<16 ||
-                                   cmdBufp->payload[2]<<8 ||
-                                   cmdBufp->payload[3]));
+      dc = (uint32_t)(((cmdBufp->payload[0])<<24) +
+          ((cmdBufp->payload[1])<<16) +
+          ((cmdBufp->payload[2])<<8) +
+          cmdBufp->payload[3]);
+      bldcSetDutyCycle (dc);
       break;
     case CMD_BLDC1_RPM:
       bldcSetRPM ((uint32_t)((cmdBufp->payload[0]<<8) + (cmdBufp->payload[1])));
